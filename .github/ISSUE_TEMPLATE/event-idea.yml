@@ -1,0 +1,48 @@
+name: Event idea
+description: Propose an event, workshop, or topic for the chapter
+title: "Event idea: "
+labels: ["event", "idea"]
+body:
+  - type: markdown
+    attributes:
+      value: Anyone can propose an event. Rough ideas are welcome. The organizers track their own tasks in Linear and will pick up ideas from here.
+  - type: textarea
+    id: what
+    attributes:
+      label: What is the event?
+      description: The topic, and what people would learn or build.
+    validations:
+      required: true
+  - type: dropdown
+    id: format
+    attributes:
+      label: Format
+      options:
+        - Info session
+        - Workshop
+        - Code jam
+        - Hackathon
+        - Cloud Study Jam
+        - Not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: track
+    attributes:
+      label: Track
+      options:
+        - Web
+        - Cloud
+        - Machine learning and AI
+        - Mobile
+        - Not sure
+  - type: textarea
+    id: who
+    attributes:
+      label: Who would run it?
+      description: You, someone you know, a speaker from industry, or nobody yet.
+  - type: textarea
+    id: needs
+    attributes:
+      label: What would it need?
+      description: Google Cloud credits, a room, laptops, a speaker, food.

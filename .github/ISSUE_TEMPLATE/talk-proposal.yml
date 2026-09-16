@@ -1,0 +1,42 @@
+name: Give a talk or demo
+description: Offer to teach something at a chapter event
+title: "Talk: "
+labels: ["talk-proposal"]
+body:
+  - type: markdown
+    attributes:
+      value: The best sessions come from people who just figured something out. You do not need to be an expert.
+  - type: input
+    id: title
+    attributes:
+      label: Working title
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: What will you show?
+      description: Two or three sentences. What people will understand or have running by the end.
+    validations:
+      required: true
+  - type: dropdown
+    id: length
+    attributes:
+      label: Length
+      options:
+        - 5 to 10 minutes
+        - 15 to 20 minutes
+        - 30 minutes or more
+    validations:
+      required: true
+  - type: textarea
+    id: tools
+    attributes:
+      label: Google tools involved
+      description: For example Gemini API, Google AI Studio, Firebase, Google Cloud, Flutter, Colab.
+  - type: checkboxes
+    id: demo
+    attributes:
+      label: Demo
+      options:
+        - label: This includes a live demo, and I will prepare a fallback (screenshots or a recording)

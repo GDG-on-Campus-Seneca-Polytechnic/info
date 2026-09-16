@@ -1,0 +1,9 @@
+# The team tracks its own tasks in Linear. Issues here are for public ideas and talk offers.
+blank_issues_enabled: true
+contact_links:
+  - name: RSVP for an event
+    url: https://gdg.community.dev/gdg-on-campus-seneca-polytechnic-toronto-canada/
+    about: Event sign-ups happen on gdg.community.dev, not here.
+  - name: All chapter links
+    url: https://linktr.ee/senecagdg
+    about: Discord, Instagram, LinkedIn, and the SSF club page.

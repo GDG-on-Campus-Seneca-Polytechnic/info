@@ -30,13 +30,18 @@ Every event the chapter runs gets its own folder under `sessions/`, grouped by t
 
 5. **Add a row** to the table in [`sessions/README.md`](sessions/README.md). Keep it sorted newest first.
 
-6. **Commit and push:**
+6. **Check the layout, then open a pull request:**
 
    ```bash
+   scripts/check-sessions.sh
+   git checkout -b add-2026-10-14-code-jam
    git add sessions/
    git commit -m "Add 2026-10-14 code jam"
-   git push
+   git push -u origin add-2026-10-14-code-jam
+   gh pr create --fill
    ```
+
+   The same check runs automatically on every pull request, along with a check for broken links between files. The organizers review and merge.
 
 ## Update a session
 

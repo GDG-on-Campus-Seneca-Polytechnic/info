@@ -38,6 +38,14 @@ We run events across four tracks:
 
 Event formats we use: info sessions, workshops, code jams, hackathons, and Cloud Study Jams.
 
+## Get involved
+
+You do not need to be on the core team to contribute. The team tracks its own tasks in Linear, so issues here are for public ideas and offers.
+
+- **Have an idea for an event?** [Open an event idea](https://github.com/GDG-on-Campus-Seneca-Polytechnic/info/issues/new?template=event-idea.yml).
+- **Want to teach something?** [Offer a talk or demo](https://github.com/GDG-on-Campus-Seneca-Polytechnic/info/issues/new?template=talk-proposal.yml). The best sessions come from people who just figured something out.
+- **Spotted something wrong here?** [Report it](https://github.com/GDG-on-Campus-Seneca-Polytechnic/info/issues/new?template=fix-or-update.yml), or fix it yourself with a pull request.
+
 ## Core team
 
 | Name | Role |
@@ -57,6 +65,9 @@ Update this table when the team changes. Roles open up every term.
 info/
 ├── README.md                          ← you are here
 ├── CONTRIBUTING.md                    ← how to add or update a session
+├── .github/                           ← issue forms, PR template, automatic checks
+├── scripts/
+│   └── check-sessions.sh              ← checks folder names and required files
 ├── templates/
 │   └── session/                       ← copy this folder to start a new session
 │       ├── README.md
