@@ -24,6 +24,7 @@
 | SSF club listing | _TBD_ |
 | Canva design (timeline or flyer) | _TBD_ |
 | Demo app | [gdg-bug-jump.vercel.app](https://gdg-bug-jump.vercel.app) |
+| Game source code | [bug-jump/](bug-jump/) |
 | Recording or photos | _TBD_ |
 | Recap | [recap.md](recap.md) |
 
