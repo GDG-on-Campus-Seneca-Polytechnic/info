@@ -38,6 +38,10 @@ We run events across four tracks:
 
 Event formats we use: info sessions, workshops, code jams, hackathons, and Cloud Study Jams.
 
+## Free stuff for students
+
+Step-by-step guides for claiming free tools as a student live in [`guides/`](guides/). Start with the [GitHub Student Developer Pack](guides/github-student-pack/).
+
 ## Get involved
 
 You do not need to be on the core team to contribute. The team tracks its own tasks in Linear, so issues here are for public ideas and offers.
@@ -66,6 +70,8 @@ info/
 ├── README.md                          ← you are here
 ├── CONTRIBUTING.md                    ← how to add or update a session
 ├── .github/                           ← issue forms, PR template, automatic checks
+├── guides/                            ← how to claim free student tools
+│   └── github-student-pack/           ← one folder per guide: README.md + images/
 ├── scripts/
 │   └── check-sessions.sh              ← checks folder names and required files
 ├── templates/
