@@ -5,5 +5,6 @@ Step-by-step guides for claiming free tools and benefits available to Seneca stu
 | Guide | What you get | Last verified |
 | --- | --- | --- |
 | [GitHub Student Developer Pack](github-student-pack/) | GitHub Copilot, GitHub Pro, Codespaces hours, partner offers | 2026-09-18 |
+| [JetBrains Student Pack](jetbrains/) | IntelliJ IDEA Ultimate, PyCharm Pro, WebStorm, DataGrip, and every other JetBrains app | 2026-09-19 |
 
 Found a guide that no longer matches what you see? [Report it](https://github.com/GDG-on-Campus-Seneca-Polytechnic/info/issues/new?template=fix-or-update.yml).
