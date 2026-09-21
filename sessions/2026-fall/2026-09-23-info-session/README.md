@@ -27,6 +27,8 @@
 | Slides (PowerPoint) | [2026-09-23-info-session.pptx](2026-09-23-info-session.pptx) |
 | Recording or photos | _TBD_ |
 | Recap | [recap.md](recap.md) |
+| Audience game source | [bean-bash/](bean-bash/) |
+| Audience game (live) | [gdg-bean-bash.tatandat110105.workers.dev](https://gdg-bean-bash.tatandat110105.workers.dev) |
 
 ## Description
 
@@ -70,6 +72,9 @@ Keep the demo to ten minutes. It is the block that always runs long.
 - [x] Slide text drafted in `deck.md`
 - [x] Slides built (`2026-09-23-info-session.pptx`)
 - [ ] Decide: live demo or swag giveaway for slide 10
+- [ ] Bean Bash deployed to Cloudflare and the QR tested on a phone
+- [ ] Bean Bash questions reviewed by the team
+- [ ] Kahoot with the same questions ready as a backup
 - [ ] Team photos for slide 4
 - [ ] Slides imported into Canva and reviewed by the team
 - [ ] Team roster on slide 4 confirmed
