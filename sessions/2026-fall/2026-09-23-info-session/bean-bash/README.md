@@ -25,6 +25,8 @@ Host keys on the arena page:
 
 The same buttons are along the bottom of the screen if you'd rather click.
 
+**Music.** A four-bar loop plays under everything: calm in the lobby, faster with drums while a question is running, and it dips under the fanfares and the platform collapse. It starts on the first press of **S** along with the rest of the audio, and **M** mutes it too.
+
 **Sound.** The arena plays its own sound effects: a blip when someone joins, a fanfare when a question starts, a countdown in the last 5 seconds, a rumble as the wrong platforms drop, and a win or wipeout sting at the end. Plug the laptop into the room speakers. Browsers only allow sound after a click, so the first press of **S** switches it on. Press **M** or the Sound button to mute; the choice is remembered on that laptop. Phones stay silent on purpose, so 20 phones don't blare at once.
 
 **Run it in short bursts.** Eight to ten questions takes about eight minutes. Run a game while people arrive, another after the team intros, and a final one for a prize. Anyone who arrives mid-game is marked as waiting and joins the next one.
@@ -74,7 +76,7 @@ Wrangler prints the URL. That URL is what the QR code points at, so it works on 
 | `src/server.js` | The room. One Durable Object per room code, holding players, the current question, and the timer. It is the only thing that decides who is knocked out. |
 | `public/arena.html`, `public/arena.js` | The projector view. 3D arena, beans, QR code, host controls. |
 | `public/index.html`, `public/phone.js` | The phone. Join, pick a colour, drag your bean. |
-| `public/audio.js` | The sound effects, synthesised in the browser. No audio files, nothing to download. |
+| `public/audio.js` | The sound effects and the background music, synthesised in the browser. No audio files, nothing to download. |
 | `public/screen.html`, `public/screen.js` | A flat 2D version of the screen. Backup if 3D misbehaves on the venue laptop. |
 | `src/questions.json` | The questions. |
 

@@ -245,6 +245,8 @@ function connect() {
 
 function send(type) {
   sfx.unlock(); // browsers only allow sound after a click or key press
+  // The music can only start once the host has pressed something.
+  if (state) sfx.music(state.phase === "question" ? "play" : "lobby");
   socket?.send(JSON.stringify({ type }));
 }
 
@@ -351,17 +353,21 @@ function escapeHtml(text) {
 
 function onPhaseChange() {
   const t = now();
+  sfx.music(state.phase === "question" ? "play" : "lobby");
   if (state.phase === "question") {
     sfx.start();
+    sfx.duckMusic(1.2);
     lastTickSecond = null;
   }
   if (state.phase === "over") {
+    sfx.duckMusic(3);
     const survivors = state.players.filter((p) => p.status === "alive").length;
     if (survivors) sfx.win();
     else sfx.lose();
   }
   if (state.phase === "reveal") {
     sfx.reveal();
+    sfx.duckMusic(2.6);
     // One rumble per wrong platform, matching the staggered drops on screen.
     platforms.forEach((_, index) => {
       if (index !== state.correct) sfx.collapse(1.0 + index * 0.18);
