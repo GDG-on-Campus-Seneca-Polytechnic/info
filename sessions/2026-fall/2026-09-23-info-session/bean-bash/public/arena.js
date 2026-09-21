@@ -1,5 +1,6 @@
 // The projector view: a 3D arena where every phone drives one bean.
 import * as THREE from "three";
+import { sfx } from "./audio.js";
 import {
   COLORS, GAP, HALF, BG, PLATFORM_OUTER, PLATFORM_TOP, ease, clamp01,
   addLights, makeBackdrop, makePlatform, makeDock, makeAnswerLabel, setAnswerLabel,
@@ -243,12 +244,17 @@ function connect() {
 }
 
 function send(type) {
+  sfx.unlock(); // browsers only allow sound after a click or key press
   socket?.send(JSON.stringify({ type }));
 }
+
+let knownPlayers = 0;
+let lastTickSecond = null;
 
 // Handy from the browser console during a rehearsal: BB.send("start"), BB.state, BB.beans.size
 window.BB = {
   send,
+  sfx,
   get state() { return state; },
   beans,
   shots: SHOTS,
@@ -259,11 +265,38 @@ window.BB = {
   },
 };
 
-document.querySelectorAll("footer button").forEach((button) =>
+document.querySelectorAll("footer button[data-cmd]").forEach((button) =>
   button.addEventListener("click", () => send(button.dataset.cmd))
 );
 
+const muteButton = el("muteBtn");
+function paintMute() {
+  muteButton.textContent = sfx.muted ? "Sound off (M)" : "Sound on (M)";
+  muteButton.classList.toggle("off", sfx.muted);
+}
+muteButton.addEventListener("click", () => {
+  sfx.unlock();
+  sfx.setMuted(!sfx.muted);
+  try {
+    localStorage.setItem("beanMuted", sfx.muted ? "1" : "0");
+  } catch {
+    /* private mode */
+  }
+  paintMute();
+});
+try {
+  sfx.setMuted(localStorage.getItem("beanMuted") === "1");
+} catch {
+  /* private mode */
+}
+paintMute();
+
 document.addEventListener("keydown", (event) => {
+  if (event.key.toLowerCase() === "m") {
+    event.preventDefault();
+    muteButton.click();
+    return;
+  }
   const keys = { s: "start", n: "next", r: "revive", escape: "reset", " ": "next" };
   const cmd = keys[event.key.toLowerCase()];
   if (cmd) {
@@ -277,6 +310,8 @@ function render(previousPhase) {
   const alive = state.players.filter((p) => p.status === "alive");
 
   el("counter").textContent = `${state.players.length} player${state.players.length === 1 ? "" : "s"}`;
+  if (state.players.length > knownPlayers) sfx.join();
+  knownPlayers = state.players.length;
   el("joinPanel").classList.toggle("hidden", playing || state.phase === "over");
   el("timer").classList.toggle("hidden", !playing);
   el("question").textContent = playing ? state.question.text : "";
@@ -316,7 +351,21 @@ function escapeHtml(text) {
 
 function onPhaseChange() {
   const t = now();
+  if (state.phase === "question") {
+    sfx.start();
+    lastTickSecond = null;
+  }
+  if (state.phase === "over") {
+    const survivors = state.players.filter((p) => p.status === "alive").length;
+    if (survivors) sfx.win();
+    else sfx.lose();
+  }
   if (state.phase === "reveal") {
+    sfx.reveal();
+    // One rumble per wrong platform, matching the staggered drops on screen.
+    platforms.forEach((_, index) => {
+      if (index !== state.correct) sfx.collapse(1.0 + index * 0.18);
+    });
     el("flash").classList.add("on");
     setTimeout(() => el("flash").classList.remove("on"), 400);
     platforms.forEach((platform, index) => {
@@ -361,7 +410,14 @@ function tickTimer() {
   bar.querySelector("i").style.transform = `scaleX(${ratio})`;
   bar.classList.toggle("low", state.phase === "question" && ratio < 0.25);
   bar.classList.toggle("reveal", state.phase === "reveal");
-  el("timerText").textContent = state.phase === "question" ? String(Math.ceil(Math.max(0, left) / 1000)) : "";
+  const seconds = Math.ceil(Math.max(0, left) / 1000);
+  el("timerText").textContent = state.phase === "question" ? String(seconds) : "";
+
+  // Tick down the last five seconds, once per second.
+  if (state.phase === "question" && seconds <= 5 && seconds > 0 && seconds !== lastTickSecond) {
+    lastTickSecond = seconds;
+    sfx.tick(seconds <= 3);
+  }
 }
 setInterval(tickTimer, 100);
 

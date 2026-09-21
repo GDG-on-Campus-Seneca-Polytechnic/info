@@ -345,6 +345,10 @@
         opacity: 1;
       }
 
+      footer button.off {
+        opacity: 0.45;
+      }
+
       footer button:active {
         transform: translateY(2px);
       }
@@ -396,6 +400,7 @@
         <button data-cmd="next">Next (N)</button>
         <button data-cmd="revive">Revive all (R)</button>
         <button data-cmd="reset">New game (Esc)</button>
+        <button id="muteBtn">Sound on (M)</button>
         <div class="spacer"></div>
         <div class="pill" id="alive"></div>
       </footer>

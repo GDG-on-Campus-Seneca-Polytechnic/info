@@ -21,8 +21,11 @@ Host keys on the arena page:
 | `N` or space | Skip to the next question |
 | `R` | Revive everyone, so knocked-out players are back in |
 | `Esc` | New game, back to the lobby |
+| `M` | Mute or unmute the sound |
 
 The same buttons are along the bottom of the screen if you'd rather click.
+
+**Sound.** The arena plays its own sound effects: a blip when someone joins, a fanfare when a question starts, a countdown in the last 5 seconds, a rumble as the wrong platforms drop, and a win or wipeout sting at the end. Plug the laptop into the room speakers. Browsers only allow sound after a click, so the first press of **S** switches it on. Press **M** or the Sound button to mute; the choice is remembered on that laptop. Phones stay silent on purpose, so 20 phones don't blare at once.
 
 **Run it in short bursts.** Eight to ten questions takes about eight minutes. Run a game while people arrive, another after the team intros, and a final one for a prize. Anyone who arrives mid-game is marked as waiting and joins the next one.
 
@@ -71,6 +74,7 @@ Wrangler prints the URL. That URL is what the QR code points at, so it works on 
 | `src/server.js` | The room. One Durable Object per room code, holding players, the current question, and the timer. It is the only thing that decides who is knocked out. |
 | `public/arena.html`, `public/arena.js` | The projector view. 3D arena, beans, QR code, host controls. |
 | `public/index.html`, `public/phone.js` | The phone. Join, pick a colour, drag your bean. |
+| `public/audio.js` | The sound effects, synthesised in the browser. No audio files, nothing to download. |
 | `public/screen.html`, `public/screen.js` | A flat 2D version of the screen. Backup if 3D misbehaves on the venue laptop. |
 | `src/questions.json` | The questions. |
 
@@ -81,4 +85,5 @@ Phones send where their bean is standing, ten times a second. The server works o
 - **Phones can't join.** Check that the QR code points at the deployed URL and not at `localhost`.
 - **The 3D arena is slow on the venue laptop.** Use `/screen.html` instead. Same game, flat 2D, much lighter.
 - **Everyone is knocked out at once.** Press `R` to revive them all and keep going.
+- **No sound.** Press **S** once (browsers block sound until a click), check the Sound button in the corner does not say "Sound off", and check the laptop's own volume and output device.
 - **The whole thing misbehaves.** Have a Kahoot with the same questions ready and switch. Nobody will mind.
