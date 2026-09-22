@@ -148,11 +148,22 @@
         font-size: clamp(2rem, 6vw, 5rem);
         font-weight: 900;
       }
+
+      .gdgTag {
+        font-size: clamp(0.7rem, 1.4vw, 1rem) !important;
+      }
+
+      .disclaimer {
+        position: fixed;
+        right: 16px;
+        bottom: 4px;
+      }
     </style>
   </head>
   <body>
     <header>
       <h1>Bean Bash</h1>
+      <div class="pill gdgTag">GDG on Campus · Seneca Polytechnic</div>
       <div class="pill" id="counter">0 players</div>
       <div class="spacer"></div>
       <div class="pill" id="roomPill"></div>
@@ -192,6 +203,8 @@
       <div class="spacer"></div>
       <div id="alive"></div>
     </footer>
+
+    <div class="disclaimer">GDG on Campus · Seneca Polytechnic is not affiliated with or endorsed by Google LLC.</div>
 
     <script src="vendor/qrcode.js"></script>
     <script src="screen.js"></script>

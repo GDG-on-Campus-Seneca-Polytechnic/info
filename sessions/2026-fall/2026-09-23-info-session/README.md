@@ -28,7 +28,8 @@
 | Recording or photos | _TBD_ |
 | Recap | [recap.md](recap.md) |
 | Audience game source | [bean-bash/](bean-bash/) |
-| Audience game (live) | [gdg-bean-bash.tatandat110105.workers.dev](https://gdg-bean-bash.tatandat110105.workers.dev) |
+| Audience game — host from this exact URL | [gdg-bean-bash.advancelabs.workers.dev/arena.html](https://gdg-bean-bash.advancelabs.workers.dev/arena.html) |
+| Audience game — players join at | [gdg.runs-on.dev](https://gdg.runs-on.dev) (QR code on the arena page also works) |
 
 ## Description
 
@@ -72,7 +73,7 @@ Keep the demo to ten minutes. It is the block that always runs long.
 - [x] Slide text drafted in `deck.md`
 - [x] Slides built (`2026-09-23-info-session.pptx`)
 - [ ] Decide: live demo or swag giveaway for slide 10
-- [ ] Bean Bash deployed to Cloudflare and the QR tested on a phone
+- [x] Bean Bash deployed to Cloudflare — end-to-end tested in a browser (join, answer, reveal, host controls, 2D fallback); still needs a real-phone QR scan test
 - [ ] Bean Bash questions reviewed by the team
 - [ ] Kahoot with the same questions ready as a backup
 - [ ] Team photos for slide 4

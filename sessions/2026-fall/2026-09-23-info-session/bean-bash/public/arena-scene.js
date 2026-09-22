@@ -1,7 +1,7 @@
 // Everything that builds the stage: backdrop, platforms, beans, particles. arena.js drives it.
 import * as THREE from "three";
 
-export const COLORS = [0x4285f4, 0xea4335, 0xfbbc04, 0x34a853];
+export const COLORS = [0x4285f4, 0xea4335, 0xf9ab00, 0x34a853];
 export const GAP = 0.12; // matches the server's dead zone
 export const HALF = 5; // arena half-width in world units
 export const BG = 0x070b18;

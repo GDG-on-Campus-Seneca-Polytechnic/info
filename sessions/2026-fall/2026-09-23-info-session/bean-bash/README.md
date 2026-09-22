@@ -4,7 +4,13 @@ A Fall Guys–style trivia game for our events. The projector shows a 3D arena; 
 
 One round type, on purpose. Nobody needs instructions, and a new group can be playing within a minute.
 
-**Live at <https://gdg-bean-bash.tatandat110105.workers.dev>** — the arena is at `/arena.html`, players join at `/`.
+**Host from <https://gdg-bean-bash.advancelabs.workers.dev/arena.html>** — use this exact URL, full-screen, on the laptop driving the projector.
+
+Players join at **<https://gdg.runs-on.dev>** (or the same workers.dev domain, `/`) — the arena's QR code and join link already point at the right place, so nobody needs to type a URL.
+
+`gdg.runs-on.dev` is a friendly redirect (via Advance Labs' [runs-on.dev](https://runs-on.dev)) to the deployment above, but it **only redirects the bare root** — it can't reach `/arena.html` or `/screen.html`, and it drops query strings (so `?room=CODE` links don't survive it either). That's a deliberate limitation of runs-on.dev's registry, not a bug: a claimed name redirects exactly one URL, nothing path-aware. Always use the workers.dev URL directly for hosting or for a specific room link; use `gdg.runs-on.dev` only as the memorable "type this in your phone's browser" fallback for the plain join screen.
+
+Colors, typography, and the GDG attribution/disclaimer footer on every screen follow the [GDG on Campus brand kit](../../../../guides/gdg-brand-kit/).
 
 ## Running the night of the event
 
@@ -67,7 +73,7 @@ Then, from this folder:
 npx wrangler deploy
 ```
 
-Wrangler prints the URL. That URL is what the QR code points at, so it works on Seneca Wi-Fi and on cellular data.
+Wrangler prints the URL — it's tied to whichever Cloudflare account is logged in (each account has its own `*.workers.dev` subdomain), so deploying from a new machine/account gives a new URL, not an update to the old one. If that happens, update the `gdg.runs-on.dev` redirect at [runs-on.dev/manage](https://runs-on.dev/manage) (or edit `domains/gdg.json` in the [runs-on.dev repo](https://github.com/zordhalo/runs-on.dev)) so the QR code keeps working without reprinting anything.
 
 ## How it works
 

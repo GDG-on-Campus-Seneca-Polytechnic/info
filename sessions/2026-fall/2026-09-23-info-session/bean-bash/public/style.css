@@ -1,12 +1,39 @@
+/* GDG on Campus brand palette — see ../../../../guides/gdg-brand-kit/README.md */
+@font-face {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("vendor/fonts/roboto-400.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("vendor/fonts/roboto-900.woff") format("woff");
+}
+
 :root {
   --blue: #4285f4;
   --red: #ea4335;
-  --yellow: #fbbc04;
+  --yellow: #f9ab00;
   --green: #34a853;
   --ink: #16181d;
   --paper: #f6f7fb;
   --shadow: 0 6px 0 rgba(0, 0, 0, 0.25);
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Roboto", ui-rounded, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+/* Small, low-opacity, never on top of anything a player needs to read or tap. */
+.disclaimer {
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1.4;
+  opacity: 0.45;
+  letter-spacing: 0.01em;
+  pointer-events: none;
 }
 
 * {

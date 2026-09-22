@@ -35,9 +35,9 @@
     "correct": 3
   },
   {
-    "text": "Azure for Students gives you credit without what?",
-    "answers": ["A credit card", "An email", "A laptop", "A password"],
-    "correct": 0
+    "text": "What's the max team size for Google's Solution Challenge?",
+    "answers": ["2", "4", "6", "No limit"],
+    "correct": 1
   },
   {
     "text": "What does the 'G' in GDG stand for?",
