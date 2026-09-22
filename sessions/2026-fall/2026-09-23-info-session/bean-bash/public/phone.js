@@ -52,6 +52,7 @@ let state = null;
 let myZone = null;
 let clockOffset = 0;
 let lastSent = 0;
+let lastQuestion = -1;
 
 // ---- join screen ----
 
@@ -104,6 +105,10 @@ function connect(code) {
   socket.addEventListener("message", (event) => {
     state = JSON.parse(event.data);
     clockOffset = state.serverNow - Date.now();
+    if (state.questionNumber !== lastQuestion) {
+      lastQuestion = state.questionNumber;
+      if (state.phase === "question") myZone = null;
+    }
     render();
   });
 
@@ -302,16 +307,3 @@ el("changeBean").addEventListener("click", () => {
 
 // Keep the tip and the timer fresh while people wait.
 setInterval(() => state && renderWaiting(myPlayer()), 2000);
-
-// A new question resets the bean to the middle.
-let lastQuestion = -1;
-setInterval(() => {
-  if (!state) return;
-  if (state.questionNumber !== lastQuestion) {
-    lastQuestion = state.questionNumber;
-    if (state.phase === "question") {
-      myZone = null;
-      centreBean();
-    }
-  }
-}, 120);
