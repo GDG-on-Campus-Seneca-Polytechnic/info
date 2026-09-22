@@ -265,11 +265,10 @@ Still being decided with the team. There are two versions of the deck, one for e
 On screen, demo version:
 
 Quick live demo
-We'll go from an empty file to a small Gemini app. Feel free to follow along.
-Google AI Studio (link)
-Nothing to install
+We'll set up an AI coding agent with GDG Seneca's own context, live.
+Drop in one file, agent instantly knows our tracks, links, and how to join
 No credit card needed
-Code window showing a short Python example with the Gemini API
+Code window showing the chapter-context template loaded into an editor
 
 On screen, swag version:
 
@@ -283,11 +282,13 @@ The swag version uses its own speaker notes. Confirm what swag we actually have 
 
 Notes: Do the demo. A talked-about demo is worth nothing.
 
-Use Google AI Studio, because it needs no credit card and no install, which means people can follow along on a laptop in the room and repeat it later.
+This is a live demo, not a workshop: there is no time in ten minutes to walk the room through claiming GitHub Student Pack or JetBrains licenses. Do that setup yourself ahead of time on the demo machine, and only show the piece that fits in ten minutes: pasting the chapter's context template (see guides/agent-context/) into an agent, then asking it something about the chapter and getting a correct answer back.
+
+Decide the exact question or task to demo during rehearsal, not on stage.
 
 Keep it to ten minutes and rehearse the whole thing once against the room's projector and the room's wifi. Have a recorded fallback ready, because campus wifi fails during live demos more often than it should.
 
-End by telling them exactly where the code is, then put that link on the linktree.
+End by pointing people at guides/ on the linktree for GitHub Student Pack, JetBrains, and the context template, so they can finish the setup themselves.
 
 ---
 
