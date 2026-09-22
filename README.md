@@ -42,6 +42,8 @@ Event formats we use: info sessions, workshops, code jams, hackathons, and Cloud
 
 Step-by-step guides for claiming free tools as a student live in [`guides/`](guides/). Start with the [GitHub Student Developer Pack](guides/github-student-pack/).
 
+Building a deck, site, or tool for the chapter? Use the [GDG on Campus brand kit](guides/gdg-brand-kit/) for colors, type, and logo rules instead of guessing.
+
 ## Get involved
 
 You do not need to be on the core team to contribute. The team tracks its own tasks in Linear, so issues here are for public ideas and offers.
