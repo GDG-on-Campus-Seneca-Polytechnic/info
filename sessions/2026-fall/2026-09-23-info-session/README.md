@@ -27,7 +27,7 @@
 | Slides (PowerPoint) | [2026-09-23-info-session.pptx](2026-09-23-info-session.pptx) |
 | Recording or photos | _TBD_ |
 | Recap | [recap.md](recap.md) |
-| Audience game source | [bean-bash/](bean-bash/) |
+| Audience game source | [GDG-on-Campus-Seneca-Polytechnic/bean-bash](https://github.com/GDG-on-Campus-Seneca-Polytechnic/bean-bash) (its own repo) |
 | Audience game — host from this exact URL | [gdg-bean-bash.advancelabs.workers.dev/arena.html](https://gdg-bean-bash.advancelabs.workers.dev/arena.html) |
 | Audience game — players join at | [gdg.runs-on.dev](https://gdg.runs-on.dev) (QR code on the arena page also works) |
 

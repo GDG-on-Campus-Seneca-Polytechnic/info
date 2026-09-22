@@ -61,9 +61,10 @@ matter for chapter-built tools:
 
 ## Where this is applied
 
-`sessions/2026-fall/2026-09-23-info-session/bean-bash/` — the audience trivia
-game — uses this palette and typography, has its own mark (not a copy of
-Google's dot grid), and carries the attribution/disclaimer line on every screen
+[GDG-on-Campus-Seneca-Polytechnic/bean-bash](https://github.com/GDG-on-Campus-Seneca-Polytechnic/bean-bash) —
+the audience trivia game — uses this palette and typography, has its own mark
+(not a copy of Google's dot grid), and carries the attribution/disclaimer line
+on every screen
 players and the host see.
 
 ## Sources
