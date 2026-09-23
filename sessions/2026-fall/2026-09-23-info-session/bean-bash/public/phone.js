@@ -53,11 +53,13 @@ if (!pid) {
 // First-timers get a random colour, so a room of new phones doesn't all start blue.
 let color = Number(store.get("beanColor", String(Math.floor(Math.random() * COLORS.length))));
 if (!(color >= 0 && color < COLORS.length)) color = 0;
+store.set("beanColor", String(color)); // keep it, or a reload would repaint the bean
 let socket = null;
 let state = null;
 let myZone = null;
 let clockOffset = 0;
 let lastSent = 0;
+let leaving = false; // set by "Leave game", so the socket doesn't reconnect
 let lastQuestion = -1;
 
 // ---- join screen ----
@@ -121,6 +123,7 @@ if (qrRoom && savedName && store.get("beanRoom", "") === qrRoom && store.get("be
 // ---- connection ----
 
 function connect(code) {
+  leaving = false;
   const scheme = location.protocol === "https:" ? "wss" : "ws";
   socket = new WebSocket(`${scheme}://${location.host}/api/ws?role=player&code=${code}`);
 
@@ -132,6 +135,7 @@ function connect(code) {
   });
 
   socket.addEventListener("message", (event) => {
+    if (leaving) return; // the room's last update after "Leave game" is not for us
     state = JSON.parse(event.data);
     clockOffset = state.serverNow - Date.now();
     if (state.questionNumber !== lastQuestion) {
@@ -142,6 +146,7 @@ function connect(code) {
   });
 
   socket.addEventListener("close", () => {
+    if (leaving) return;
     statusEl.textContent = "Disconnected. Reconnecting…";
     setTimeout(() => connect(code), 1200);
   });
@@ -346,6 +351,18 @@ zones.forEach((zone) => {
     sendPosition(x, y, true);
     render();
   });
+});
+
+el("leaveBtn").addEventListener("click", () => {
+  leaving = true;
+  socket?.send(JSON.stringify({ type: "leave" }));
+  store.set("beanJoined", ""); // don't auto-rejoin on the next visit
+  setTimeout(() => socket?.close(), 150); // let the leave message go out first
+  state = null;
+  waitView.classList.add("hidden");
+  gameView.classList.add("hidden");
+  joinView.classList.remove("hidden");
+  el("joinHint").textContent = "You left the game. Join again any time.";
 });
 
 el("changeBean").addEventListener("click", () => {

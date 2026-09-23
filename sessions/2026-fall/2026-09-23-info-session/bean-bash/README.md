@@ -20,7 +20,7 @@ Host keys on the arena page:
 | `S` | Start a game |
 | `N` or space | Skip to the next question |
 | `R` | Revive everyone, so knocked-out players are back in |
-| `Esc` | New game, back to the lobby |
+| `Esc` | New game, back to the lobby, and clears out players who have left |
 | `M` | Mute or unmute the sound |
 
 The same buttons are along the bottom of the screen if you'd rather click.
@@ -30,6 +30,8 @@ The same buttons are along the bottom of the screen if you'd rather click.
 **Sound.** The arena plays its own sound effects: a blip when someone joins, a fanfare when a question starts, a countdown in the last 5 seconds, a rumble as the wrong platforms drop, and a win or wipeout sting at the end. Plug the laptop into the room speakers. Browsers only allow sound after a click, so the first press of **S** switches it on. Press **M** or the Sound button to mute; the choice is remembered on that laptop. Phones stay silent on purpose, so 20 phones don't blare at once.
 
 **Joining.** Scanning the QR opens the join page with the room already filled in. Everyone types a name and picks one of eight bean colours, then joins. Names are unique per room: if two people pick "Sam", the second becomes "Sam 2" and their phone tells them so. While playing, the top of each phone shows that player's bean, name and score, so they can find themselves on the big screen.
+
+**Leaving.** A phone that disconnects gets 30 seconds to come back, because locked screens and reloads happen all the time. After that its bean is removed. Players can also tap **Leave game** in the waiting room to go right away. Pressing **Esc** (New game) clears out everyone who is disconnected at that moment, so do that just before the real game to start with a clean room. Anyone who leaves and comes back later keeps tonight's points.
 
 **Scoring.** A right answer is worth 500 points, plus up to 500 more for getting onto the platform early (it counts from the last time you moved). The last beans standing get a 500-point bonus. The leaderboard shows on the right after every reveal and on the final screen. Between games, the lobby shows **tonight's top beans**: totals across every game in that room, which is handy for handing out a prize at the end. Starting a new room resets them.
 

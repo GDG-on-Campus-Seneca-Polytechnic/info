@@ -7,6 +7,9 @@ const GAP = 0.12; // dead zone in the middle of the arena, where no answer count
 const REVEAL_SECONDS = 6;
 const BEAN_COLORS = 8; // must match BEAN_COLORS on the phone and the arena
 const WIN_BONUS = 500; // for the last beans standing
+// A locked phone or a reload drops the connection for a few seconds. Only someone
+// who stays gone this long has actually left.
+const LEAVE_GRACE_MS = 30000;
 
 function randomCode(n = 4) {
   const bytes = crypto.getRandomValues(new Uint8Array(n));
@@ -44,7 +47,9 @@ export class Room {
     this.state = state;
     this.env = env;
     this.sockets = new Set(); // { ws, role, pid }
-    this.players = new Map(); // pid -> { pid, name, color, status, zone }
+    this.players = new Map(); // pid -> { pid, name, color, status, zone, score, total }
+    this.leaveTimers = new Map(); // pid -> timeout that removes a player who went quiet
+    this.departed = new Map(); // pid -> { total }, so tonight's points survive a walk-out
     this.hostKey = null;
     this.phase = "lobby"; // lobby | question | reveal | over
     this.qIndex = -1;
@@ -83,7 +88,8 @@ export class Room {
       this.onMessage(conn, msg);
     });
     const drop = () => {
-      this.sockets.delete(conn);
+      if (!this.sockets.delete(conn)) return; // "close" and "error" can both fire
+      if (conn.pid) this.scheduleLeave(conn.pid);
       this.broadcast();
     };
     server.addEventListener("close", drop);
@@ -96,8 +102,8 @@ export class Room {
   onMessage(conn, msg) {
     if (conn.role === "player") {
       if (msg.type === "join") return this.join(conn, msg);
-      if (msg.type === "choose") return this.choose(conn, msg);
       if (msg.type === "move") return this.move(conn, msg);
+      if (msg.type === "leave") return this.leave(conn);
       return;
     }
 
@@ -114,6 +120,8 @@ export class Room {
     const wanted = String(msg.name || "").replace(/\s+/g, " ").trim().slice(0, 14);
     if (!wanted) return; // the phone asks for a name first; never invent one
     const color = Math.abs(Math.floor(Number(msg.color) || 0)) % BEAN_COLORS;
+    clearTimeout(this.leaveTimers.get(pid));
+    this.leaveTimers.delete(pid);
     const existing = this.players.get(pid);
     const name = this.uniqueName(wanted, pid);
     if (existing) {
@@ -122,13 +130,50 @@ export class Room {
     } else {
       // Someone arriving mid-game waits for the next game.
       const status = this.phase === "lobby" ? "alive" : "waiting";
+      const total = this.departed.get(pid)?.total || 0;
+      this.departed.delete(pid);
       this.players.set(pid, {
         pid, name, color, status, zone: null, zoneAt: 0, pos: null,
-        score: 0, total: 0, gained: 0,
+        score: 0, total, gained: 0,
       });
     }
     conn.pid = pid;
     this.broadcast();
+  }
+
+  // The phone's "Leave game" button: gone straight away, no grace period.
+  leave(conn) {
+    const pid = conn.pid;
+    if (!pid) return;
+    conn.pid = null;
+    this.removePlayer(pid);
+  }
+
+  isConnected(pid) {
+    for (const conn of this.sockets) if (conn.pid === pid) return true;
+    return false;
+  }
+
+  scheduleLeave(pid) {
+    if (this.isConnected(pid)) return; // another tab of the same phone is still open
+    clearTimeout(this.leaveTimers.get(pid));
+    this.leaveTimers.set(
+      pid,
+      setTimeout(() => {
+        this.leaveTimers.delete(pid);
+        if (!this.isConnected(pid)) this.removePlayer(pid);
+      }, LEAVE_GRACE_MS)
+    );
+  }
+
+  removePlayer(pid, { quiet = false } = {}) {
+    clearTimeout(this.leaveTimers.get(pid));
+    this.leaveTimers.delete(pid);
+    const player = this.players.get(pid);
+    if (!player) return;
+    if (player.total > 0) this.departed.set(pid, { total: player.total });
+    this.players.delete(pid);
+    if (!quiet) this.broadcast();
   }
 
   // Two people called Sam would never find their bean, so the second one becomes "Sam 2".
@@ -147,16 +192,6 @@ export class Room {
   setZone(player, zone) {
     if (zone !== player.zone) player.zoneAt = Date.now();
     player.zone = zone;
-  }
-
-  choose(conn, msg) {
-    if (this.phase !== "question") return;
-    const player = this.players.get(conn.pid);
-    if (!player || player.status !== "alive") return;
-    const zone = Number(msg.zone);
-    if (!(zone >= 0 && zone <= 3)) return;
-    this.setZone(player, zone);
-    this.broadcast(); // the screen shows how many have locked in
   }
 
   // A phone sends where its character is standing; the platform under it is the answer.
@@ -289,6 +324,11 @@ export class Room {
     this.phase = "lobby";
     this.qIndex = -1;
     this.deadline = 0;
+    // A fresh lobby is the moment to clear out anyone who already left, without waiting
+    // for their grace period to run out.
+    for (const pid of [...this.players.keys()]) {
+      if (!this.isConnected(pid)) this.removePlayer(pid, { quiet: true });
+    }
     for (const p of this.players.values()) {
       p.status = "alive";
       p.zone = null;
@@ -326,6 +366,8 @@ export class Room {
         score: p.score,
         total: p.total,
         gained: p.gained,
+        // Connection dropped but still inside the grace period.
+        away: !this.isConnected(p.pid),
       })),
     };
   }

@@ -74,7 +74,7 @@ Keep the demo to ten minutes. It is the block that always runs long.
 - [x] Decide: live demo or swag giveaway for slide 10 (live demo: set up an agent with the chapter's context template, `guides/agent-context/`)
 - [ ] Demo machine pre-configured with GitHub Copilot and JetBrains already claimed, so no live sign-up is needed on stage
 - [ ] Live-demo question/task decided and rehearsed (see deck.md Slide 10 notes)
-- [ ] Bean Bash deployed to Cloudflare and the QR tested on a phone
+- [x] Bean Bash deployed to Cloudflare and the QR tested on a phone
 - [ ] Bean Bash questions reviewed by the team
 - [ ] Kahoot with the same questions ready as a backup
 - [ ] Team photos for slide 4

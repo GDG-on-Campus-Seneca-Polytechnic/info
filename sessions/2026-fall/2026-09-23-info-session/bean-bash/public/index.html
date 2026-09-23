@@ -259,9 +259,21 @@
         margin: 0;
       }
 
-      #changeBean {
+      #changeBean,
+      #leaveBtn {
         font-size: 0.9rem;
         padding: 0.5em 1.1em;
+      }
+
+      .waitButtons {
+        display: flex;
+        gap: 10px;
+      }
+
+      #leaveBtn {
+        box-shadow: none;
+        border-color: rgba(22, 24, 29, 0.35);
+        color: rgba(22, 24, 29, 0.7);
       }
     </style>
   </head>
@@ -294,7 +306,10 @@
       </div>
       <div class="dots"><span></span><span></span><span></span></div>
       <p id="waitTip"></p>
-      <button id="changeBean">Change colour</button>
+      <div class="waitButtons">
+        <button id="changeBean">Change colour</button>
+        <button id="leaveBtn">Leave game</button>
+      </div>
     </section>
 
     <!-- Game -->
