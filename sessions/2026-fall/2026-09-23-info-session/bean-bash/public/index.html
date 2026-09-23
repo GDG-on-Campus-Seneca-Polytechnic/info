@@ -49,14 +49,14 @@
       }
 
       .colors {
-        display: flex;
-        gap: 12px;
-        margin: 14px 0;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin: 10px 0 16px;
       }
 
       .colors button {
-        flex: 1;
-        padding: 10px;
+        padding: 8px;
         display: flex;
         justify-content: center;
         border-radius: 16px;
@@ -64,6 +64,50 @@
 
       .colors button[aria-pressed="true"] {
         background: var(--ink);
+      }
+
+      .label {
+        margin: 14px 0 8px;
+        font-weight: 800;
+      }
+
+      .label:first-child {
+        margin-top: 0;
+      }
+
+      #joinHint {
+        color: var(--red);
+        opacity: 1;
+        min-height: 1.2em;
+      }
+
+      /* "This is you": name, colour and score, always visible while playing. */
+      #meChip {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px 14px 6px 8px;
+        border: 3px solid var(--ink);
+        border-radius: 999px;
+        background: #fff;
+        box-shadow: 0 3px 0 rgba(0, 0, 0, 0.25);
+        font-weight: 900;
+      }
+
+      #meChip .bean {
+        --size: 26px;
+        flex: none;
+      }
+
+      #meName {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      #meScore {
+        font-variant-numeric: tabular-nums;
       }
 
       #status {
@@ -226,11 +270,13 @@
     <section id="joinView">
       <h1>Bean Bash</h1>
       <div class="card">
-        <p style="margin: 0 0 10px; font-weight: 700">Room code</p>
-        <input id="roomInput" maxlength="4" autocapitalize="characters" autocomplete="off" placeholder="ABCD" />
-        <p style="margin: 14px 0 10px; font-weight: 700">Your name</p>
-        <input id="nameInput" maxlength="16" placeholder="Name" />
+        <p class="label">Your name</p>
+        <input id="nameInput" maxlength="14" placeholder="So you can find your bean" autocomplete="nickname" enterkeyhint="go" />
+        <p class="label">Pick your bean</p>
         <div class="colors" id="colors"></div>
+        <p class="label">Room code</p>
+        <input id="roomInput" maxlength="4" autocapitalize="characters" autocomplete="off" placeholder="ABCD" />
+        <div style="height: 14px"></div>
         <button id="joinBtn" style="width: 100%">Join the game</button>
         <p class="hint" id="joinHint"></p>
       </div>
@@ -244,6 +290,7 @@
       <div class="tags">
         <div class="tag" id="waitRoom"></div>
         <div class="tag" id="waitCount"></div>
+        <div class="tag hidden" id="waitScore"></div>
       </div>
       <div class="dots"><span></span><span></span><span></span></div>
       <p id="waitTip"></p>
@@ -252,6 +299,7 @@
 
     <!-- Game -->
     <section id="gameView" class="hidden" style="display: contents">
+      <div id="meChip"><span class="bean" id="meBean"></span><span id="meName"></span><span id="meScore"></span></div>
       <div id="status">Waiting for the game to start</div>
       <div id="question"></div>
       <div class="timerbar" id="timer"><i></i></div>

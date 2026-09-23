@@ -5,6 +5,8 @@ const CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no I, O, 0, 1
 const QUESTION_SECONDS = 20;
 const GAP = 0.12; // dead zone in the middle of the arena, where no answer counts
 const REVEAL_SECONDS = 6;
+const BEAN_COLORS = 8; // must match BEAN_COLORS on the phone and the arena
+const WIN_BONUS = 500; // for the last beans standing
 
 function randomCode(n = 4) {
   const bytes = crypto.getRandomValues(new Uint8Array(n));
@@ -109,19 +111,42 @@ export class Room {
   join(conn, msg) {
     const pid = String(msg.pid || "").slice(0, 64);
     if (!pid) return;
-    const name = String(msg.name || "").trim().slice(0, 16) || "Bean";
-    const color = Number(msg.color) || 0;
+    const wanted = String(msg.name || "").replace(/\s+/g, " ").trim().slice(0, 14);
+    if (!wanted) return; // the phone asks for a name first; never invent one
+    const color = Math.abs(Math.floor(Number(msg.color) || 0)) % BEAN_COLORS;
     const existing = this.players.get(pid);
+    const name = this.uniqueName(wanted, pid);
     if (existing) {
       existing.name = name;
       existing.color = color;
     } else {
       // Someone arriving mid-game waits for the next game.
       const status = this.phase === "lobby" ? "alive" : "waiting";
-      this.players.set(pid, { pid, name, color, status, zone: null, pos: null });
+      this.players.set(pid, {
+        pid, name, color, status, zone: null, zoneAt: 0, pos: null,
+        score: 0, total: 0, gained: 0,
+      });
     }
     conn.pid = pid;
     this.broadcast();
+  }
+
+  // Two people called Sam would never find their bean, so the second one becomes "Sam 2".
+  uniqueName(wanted, pid) {
+    const taken = new Set(
+      [...this.players.values()].filter((p) => p.pid !== pid).map((p) => p.name.toLowerCase())
+    );
+    if (!taken.has(wanted.toLowerCase())) return wanted;
+    for (let n = 2; ; n++) {
+      const candidate = `${wanted.slice(0, 11)} ${n}`;
+      if (!taken.has(candidate.toLowerCase())) return candidate;
+    }
+  }
+
+  // Remember when a player last changed platform: answering early is worth more.
+  setZone(player, zone) {
+    if (zone !== player.zone) player.zoneAt = Date.now();
+    player.zone = zone;
   }
 
   choose(conn, msg) {
@@ -130,7 +155,7 @@ export class Room {
     if (!player || player.status !== "alive") return;
     const zone = Number(msg.zone);
     if (!(zone >= 0 && zone <= 3)) return;
-    player.zone = zone;
+    this.setZone(player, zone);
     this.broadcast(); // the screen shows how many have locked in
   }
 
@@ -143,7 +168,7 @@ export class Room {
     const y = clamp(Number(msg.y));
     if (Number.isNaN(x) || Number.isNaN(y)) return;
     player.pos = { x, y };
-    player.zone = zoneFromPosition(x, y);
+    this.setZone(player, zoneFromPosition(x, y));
     this.pumpPositions();
   }
 
@@ -178,6 +203,8 @@ export class Room {
       p.status = "alive";
       p.zone = null;
       p.pos = null;
+      p.score = 0;
+      p.gained = 0;
     }
     this.nextQuestion();
   }
@@ -195,7 +222,9 @@ export class Room {
     for (const p of this.players.values()) {
       p.zone = null;
       p.pos = null;
+      p.gained = 0;
     }
+    this.questionStartedAt = Date.now();
     this.deadline = Date.now() + QUESTION_SECONDS * 1000;
     this.setTimer(() => this.lockIn(), QUESTION_SECONDS * 1000);
     this.broadcast();
@@ -204,9 +233,19 @@ export class Room {
   lockIn() {
     if (this.phase !== "question") return;
     const question = this.questions[this.qIndex];
+    const answerWindow = QUESTION_SECONDS * 1000;
     for (const p of this.players.values()) {
+      p.gained = 0;
       if (p.status !== "alive") continue;
-      if (p.zone !== question.correct) p.status = "out";
+      if (p.zone !== question.correct) {
+        p.status = "out";
+        continue;
+      }
+      // Kahoot-style: 500 for being right, up to 500 more for getting there early.
+      const early = Math.max(0, Math.min(1, (this.deadline - p.zoneAt) / answerWindow));
+      p.gained = 500 + Math.round(500 * early);
+      p.score += p.gained;
+      p.total += p.gained;
     }
     this.phase = "reveal";
     this.deadline = Date.now() + REVEAL_SECONDS * 1000;
@@ -223,6 +262,15 @@ export class Room {
 
   finish() {
     this.setTimer(null);
+    if (this.phase !== "over") {
+      for (const p of this.players.values()) {
+        p.gained = 0;
+        if (p.status !== "alive" || this.qIndex < 0) continue;
+        p.gained = WIN_BONUS;
+        p.score += WIN_BONUS;
+        p.total += WIN_BONUS;
+      }
+    }
     this.phase = "over";
     this.deadline = 0;
     this.broadcast();
@@ -275,6 +323,9 @@ export class Room {
         zone: reveal ? p.zone : null,
         pos: p.pos,
         locked: p.zone !== null,
+        score: p.score,
+        total: p.total,
+        gained: p.gained,
       })),
     };
   }

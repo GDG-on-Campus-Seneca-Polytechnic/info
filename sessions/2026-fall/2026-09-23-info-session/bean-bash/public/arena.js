@@ -2,9 +2,9 @@
 import * as THREE from "three";
 import { sfx } from "./audio.js";
 import {
-  COLORS, GAP, HALF, BG, PLATFORM_OUTER, PLATFORM_TOP, ease, clamp01,
+  COLORS, BEAN_COLORS, GAP, HALF, BG, PLATFORM_OUTER, PLATFORM_TOP, ease, clamp01,
   addLights, makeBackdrop, makePlatform, makeDock, makeAnswerLabel, setAnswerLabel,
-  makeBean, setBenched, animateRig, makePuffs, makeConfetti,
+  makeBean, setBeanLook, setBenched, animateRig, makePuffs, makeConfetti,
 } from "./arena-scene.js";
 
 const el = (id) => document.getElementById(id);
@@ -119,7 +119,7 @@ function syncBeans(players) {
     let bean = beans.get(player.pid);
     const isNew = !bean;
     if (isNew) {
-      bean = makeBean(COLORS[player.color] ? player.color : 0, player.name);
+      bean = makeBean(BEAN_COLORS[player.color] ? player.color : 0, player.name);
       scene.add(bean.group);
       beans.set(player.pid, bean);
       // A screen reload mid-round must put alive players straight back where they stand.
@@ -130,6 +130,10 @@ function syncBeans(players) {
     }
     bean.status = player.status;
     bean.zone = player.zone;
+    const colorIndex = BEAN_COLORS[player.color] ? player.color : 0;
+    if (!isNew && (bean.colorIndex !== colorIndex || bean.name !== player.name)) {
+      setBeanLook(bean, colorIndex, player.name);
+    }
 
     const onStage = staged && player.status === "alive";
     // Knocked-out beans stay on stage through the reveal (that's when they fall) and only move
@@ -344,7 +348,66 @@ function render(previousPhase) {
   moveCamera(SHOTS[state.phase === "lobby" || state.phase === "over" ? state.phase : "play"]);
   syncBeans(state.players);
 
+  renderBoard();
   if (state.phase !== previousPhase) onPhaseChange();
+}
+
+// ---------------------------------------------------------------- leaderboard
+
+const BEAN_CSS = BEAN_COLORS.map((c) => "#" + new THREE.Color(c).getHexString());
+
+function renderBoard() {
+  const board = el("board");
+  let field = null;
+  let title = "";
+  let size = 5;
+  if (state.phase === "reveal") {
+    field = "score";
+    title = `Leaderboard · after Q${state.questionNumber}`;
+  } else if (state.phase === "over") {
+    field = "score";
+    title = "Final scores";
+    size = 8;
+  } else if (state.phase === "lobby" && state.players.some((p) => p.total > 0)) {
+    field = "total";
+    title = "Tonight's top beans";
+  }
+
+  const ranked = field
+    ? [...state.players].filter((p) => p[field] > 0).sort((a, b) => b[field] - a[field]).slice(0, size)
+    : [];
+  board.classList.toggle("hidden", !ranked.length);
+  if (!ranked.length) return;
+
+  el("boardTitle").textContent = title;
+  el("boardList").replaceChildren(
+    ...ranked.map((p, i) => {
+      const li = document.createElement("li");
+      li.style.animationDelay = `${i * 60}ms`;
+      if (field === "score" && p.status === "out") li.classList.add("out");
+      const rank = document.createElement("span");
+      rank.className = "rank";
+      rank.textContent = String(i + 1);
+      const dot = document.createElement("span");
+      dot.className = "dot";
+      dot.style.background = BEAN_CSS[p.color] || BEAN_CSS[0];
+      const who = document.createElement("span");
+      who.className = "who";
+      who.textContent = p.name;
+      const pts = document.createElement("span");
+      pts.className = "pts";
+      pts.textContent = p[field].toLocaleString();
+      li.append(rank, dot, who);
+      if (field === "score" && p.gained > 0) {
+        const gain = document.createElement("span");
+        gain.className = "gain";
+        gain.textContent = `+${p.gained}`;
+        li.append(gain);
+      }
+      li.append(pts);
+      return li;
+    })
+  );
 }
 
 function escapeHtml(text) {

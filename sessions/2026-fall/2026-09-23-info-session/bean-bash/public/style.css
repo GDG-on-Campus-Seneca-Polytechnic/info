@@ -3,6 +3,11 @@
   --red: #ea4335;
   --yellow: #fbbc04;
   --green: #34a853;
+  /* Four more bean colours, so a crowd of 20 isn't five identical blue beans. */
+  --purple: #a142f4;
+  --pink: #f538a0;
+  --teal: #12b5cb;
+  --orange: #fa7b17;
   --ink: #16181d;
   --paper: #f6f7fb;
   --shadow: 0 6px 0 rgba(0, 0, 0, 0.25);

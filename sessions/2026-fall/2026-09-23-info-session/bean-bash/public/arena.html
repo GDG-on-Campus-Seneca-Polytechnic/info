@@ -322,6 +322,105 @@
         }
       }
 
+      /* Leaderboard: right-hand panel on the reveal, the final screen, and in the lobby. */
+      #board {
+        position: fixed;
+        right: 30px;
+        top: 50%;
+        transform: translateY(-42%);
+        width: min(380px, 27vw);
+        padding: 18px 18px 14px;
+        border-radius: 26px;
+        background: var(--glass);
+        border: 2px solid var(--line);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+        animation: slideIn 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.15) both;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translate(40px, -42%);
+        }
+      }
+
+      #boardTitle {
+        margin: 0 4px 10px;
+        font-size: clamp(0.8rem, 1.2vw, 1.05rem);
+        font-weight: 900;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--yellow);
+      }
+
+      #boardList {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      #boardList li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 7px 12px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.06);
+        font-weight: 800;
+        font-size: clamp(0.95rem, 1.45vw, 1.35rem);
+        animation: rowIn 0.4s ease-out both;
+      }
+
+      #boardList li:first-child {
+        background: rgba(251, 188, 4, 0.18);
+        outline: 2px solid rgba(251, 188, 4, 0.55);
+      }
+
+      @keyframes rowIn {
+        from {
+          opacity: 0;
+          transform: translateX(16px);
+        }
+      }
+
+      #boardList .rank {
+        width: 1.6em;
+        opacity: 0.6;
+        font-variant-numeric: tabular-nums;
+      }
+
+      #boardList .dot {
+        width: 0.8em;
+        height: 0.8em;
+        border-radius: 50%;
+        flex: none;
+      }
+
+      #boardList .who {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      #boardList .pts {
+        font-variant-numeric: tabular-nums;
+      }
+
+      #boardList .gain {
+        font-size: 0.75em;
+        color: var(--green);
+        font-variant-numeric: tabular-nums;
+      }
+
+      #boardList .out {
+        opacity: 0.55;
+      }
+
       /* Host controls: there for the presenter, quiet for the room. */
       footer {
         margin-top: auto;
@@ -394,6 +493,11 @@
       </div>
 
       <div id="bigMessage" class="hidden"></div>
+
+      <aside id="board" class="hidden">
+        <div id="boardTitle"></div>
+        <ol id="boardList"></ol>
+      </aside>
 
       <footer>
         <button data-cmd="start">Start (S)</button>

@@ -2,6 +2,8 @@
 import * as THREE from "three";
 
 export const COLORS = [0x4285f4, 0xea4335, 0xfbbc04, 0x34a853];
+// Beans get four extra colours so a crowd is easier to tell apart. Same order as the phone.
+export const BEAN_COLORS = [...COLORS, 0xa142f4, 0xf538a0, 0x12b5cb, 0xfa7b17];
 export const GAP = 0.12; // matches the server's dead zone
 export const HALF = 5; // arena half-width in world units
 export const BG = 0x070b18;
@@ -405,8 +407,8 @@ const mat = {
   glint: new THREE.MeshBasicMaterial({ color: 0xffffff }),
   leaf: new THREE.MeshStandardMaterial({ color: 0x34a853, roughness: 0.7 }),
   stem: new THREE.MeshStandardMaterial({ color: 0x2b7a3d, roughness: 0.8 }),
-  body: COLORS.map((c) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.45 })),
-  dark: COLORS.map((c) => new THREE.MeshStandardMaterial({ color: shade(c, 0.5), roughness: 0.7 })),
+  body: BEAN_COLORS.map((c) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.45 })),
+  dark: BEAN_COLORS.map((c) => new THREE.MeshStandardMaterial({ color: shade(c, 0.5), roughness: 0.7 })),
   benchBody: new THREE.MeshStandardMaterial({ color: 0x5c6273, roughness: 0.6 }),
   benchDark: new THREE.MeshStandardMaterial({ color: 0x2e3240, roughness: 0.8 }),
 };
@@ -430,7 +432,7 @@ function tagTexture(name, colorIndex) {
   ctx.beginPath();
   ctx.roundRect(x, 18, w, 92, 46);
   ctx.fill();
-  ctx.fillStyle = "#" + new THREE.Color(COLORS[colorIndex]).getHexString();
+  ctx.fillStyle = "#" + new THREE.Color(BEAN_COLORS[colorIndex]).getHexString();
   ctx.beginPath();
   ctx.arc(x + padX + 4, 64, 16, 0, Math.PI * 2);
   ctx.fill();
@@ -519,6 +521,7 @@ export function makeBean(colorIndex, name) {
     arms,
     tag,
     colorIndex,
+    name,
     parts: { body, feet, arms: arms.map((p) => p.children[0]) },
     target: new THREE.Vector3(),
     velocity: new THREE.Vector3(),
@@ -534,6 +537,15 @@ export function makeBean(colorIndex, name) {
     spin: new THREE.Vector3(),
     cheer: false,
   };
+}
+
+// A player changed colour or got a new name: repaint the bean where it stands.
+export function setBeanLook(bean, colorIndex, name) {
+  bean.colorIndex = colorIndex;
+  bean.name = name;
+  bean.tag.material.map = tagTexture(name, colorIndex);
+  bean.tag.material.needsUpdate = true;
+  setBenched(bean, bean.mode === "bench");
 }
 
 export function setBenched(bean, benched) {

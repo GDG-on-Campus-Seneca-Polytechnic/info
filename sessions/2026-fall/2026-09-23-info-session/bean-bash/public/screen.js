@@ -1,5 +1,5 @@
 // Big screen: shows the QR to join, the question, and every bean.
-const COLORS = ["var(--blue)", "var(--red)", "var(--yellow)", "var(--green)"];
+const COLORS = ["var(--blue)", "var(--red)", "var(--yellow)", "var(--green)", "var(--purple)", "var(--pink)", "var(--teal)", "var(--orange)"];
 const el = (id) => document.getElementById(id);
 
 const params = new URLSearchParams(location.search);

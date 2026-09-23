@@ -1,5 +1,9 @@
 // Phone controller: join a room, drag your bean onto an answer.
-const COLORS = ["var(--blue)", "var(--red)", "var(--yellow)", "var(--green)"];
+// Same order as BEAN_COLORS on the arena and the server.
+const COLORS = [
+  "var(--blue)", "var(--red)", "var(--yellow)", "var(--green)",
+  "var(--purple)", "var(--pink)", "var(--teal)", "var(--orange)",
+];
 
 const el = (id) => document.getElementById(id);
 const joinView = el("joinView");
@@ -46,7 +50,9 @@ if (!pid) {
   pid = crypto.randomUUID();
   store.set("beanPid", pid);
 }
-let color = Number(store.get("beanColor", "0"));
+// First-timers get a random colour, so a room of new phones doesn't all start blue.
+let color = Number(store.get("beanColor", String(Math.floor(Math.random() * COLORS.length))));
+if (!(color >= 0 && color < COLORS.length)) color = 0;
 let socket = null;
 let state = null;
 let myZone = null;
@@ -75,18 +81,42 @@ COLORS.forEach((value, index) => {
 });
 me.style.setProperty("--bean", COLORS[color]);
 
+function myName() {
+  return nameInput.value.replace(/\s+/g, " ").trim().slice(0, 14);
+}
+
 el("joinBtn").addEventListener("click", () => {
   const code = roomInput.value.trim().toUpperCase();
-  if (!/^[A-Z0-9]{4}$/.test(code)) {
-    el("joinHint").textContent = "Room codes are 4 letters or numbers.";
+  if (!myName()) {
+    el("joinHint").textContent = "Type a name first, so you can spot your bean on the big screen.";
+    nameInput.focus();
     return;
   }
+  if (!/^[A-Z0-9]{4}$/.test(code)) {
+    el("joinHint").textContent = "Room codes are 4 letters or numbers.";
+    roomInput.focus();
+    return;
+  }
+  el("joinHint").textContent = "";
   store.set("beanRoom", code);
-  store.set("beanName", nameInput.value.trim());
+  store.set("beanName", myName());
   connect(code);
 });
 
-if (params.get("room")) el("joinBtn").click();
+nameInput.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") el("joinBtn").click();
+});
+
+// Scanning the QR fills in the room, but everyone still picks a name and a bean.
+// Only someone reloading the page mid-game, with a name already saved for this
+// exact room, goes straight back in.
+const qrRoom = (params.get("room") || "").toUpperCase();
+const savedName = store.get("beanName", "");
+if (qrRoom && savedName && store.get("beanRoom", "") === qrRoom && store.get("beanJoined", "") === qrRoom) {
+  el("joinBtn").click();
+} else if (qrRoom) {
+  nameInput.focus();
+}
 
 // ---- connection ----
 
@@ -97,9 +127,8 @@ function connect(code) {
   socket.addEventListener("open", () => {
     joinView.classList.add("hidden");
     gameView.classList.remove("hidden");
-    socket.send(
-      JSON.stringify({ type: "join", pid, name: nameInput.value.trim() || "Bean", color })
-    );
+    store.set("beanJoined", code);
+    socket.send(JSON.stringify({ type: "join", pid, name: myName(), color }));
   });
 
   socket.addEventListener("message", (event) => {
@@ -150,13 +179,34 @@ function renderWaiting(player) {
       ? `Winner: ${winners.map((p) => p.name).join(", ")}`
       : "Nobody survived that one.";
   } else {
-    el("waitTitle").textContent = `You're in, ${player?.name || "Bean"}`;
-    el("waitLine").textContent = "Waiting for the host to start.";
+    el("waitTitle").textContent = `You're in, ${player?.name || myName()}`;
+    el("waitLine").textContent =
+      player && player.name !== myName()
+        ? `Someone already took "${myName()}", so you're "${player.name}". Look for it on the big screen.`
+        : "Look for your name on the big screen.";
   }
+
+  const standing = rankOf(player, state.phase === "lobby" ? "total" : "score");
+  el("waitScore").classList.toggle("hidden", !standing);
+  if (standing) el("waitScore").textContent = standing;
 
   el("waitRoom").textContent = `Room ${store.get("beanRoom", "")}`;
   el("waitCount").textContent = others <= 0 ? "First one here" : `${state.players.length} players`;
   el("waitTip").textContent = TIPS[Math.floor(Date.now() / 6000) % TIPS.length];
+}
+
+// "#3 · 1,420 pts", ranked by this game's score or tonight's total.
+function rankOf(player, field) {
+  if (!player || !player[field]) return "";
+  const ranked = [...state.players].sort((a, b) => b[field] - a[field]);
+  const place = ranked.findIndex((p) => p.pid === player.pid) + 1;
+  return `#${place} · ${player[field].toLocaleString()} pts`;
+}
+
+function renderMe(player) {
+  el("meBean").style.setProperty("--bean", COLORS[color]);
+  el("meName").textContent = player?.name || myName();
+  el("meScore").textContent = player ? `${(player.score || 0).toLocaleString()} pts` : "";
 }
 
 function render() {
@@ -164,6 +214,7 @@ function render() {
   const player = myPlayer();
   const question = state.question;
   renderWaiting(player);
+  renderMe(player);
 
   zones.forEach((zone, index) => {
     zone.textContent = question ? question.answers[index] : "";
@@ -187,7 +238,7 @@ function render() {
     hint.textContent = "Drag your bean onto an answer";
   } else if (state.phase === "reveal") {
     const survived = player?.status === "alive";
-    statusEl.textContent = survived ? "You survived" : "Wrong one";
+    statusEl.textContent = survived ? `You survived  +${(player.gained || 0).toLocaleString()}` : "Wrong one";
     hint.textContent = "";
   } else if (state.phase === "over") {
     const winners = state.players.filter((p) => p.status === "alive");
@@ -302,7 +353,7 @@ el("changeBean").addEventListener("click", () => {
   store.set("beanColor", String(color));
   me.style.setProperty("--bean", COLORS[color]);
   waitBean.style.setProperty("--bean", COLORS[color]);
-  socket?.send(JSON.stringify({ type: "join", pid, name: nameInput.value.trim() || "Bean", color }));
+  socket?.send(JSON.stringify({ type: "join", pid, name: myName(), color }));
 });
 
 // Keep the tip and the timer fresh while people wait.
